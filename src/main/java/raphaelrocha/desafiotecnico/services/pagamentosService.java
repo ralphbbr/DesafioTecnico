@@ -55,9 +55,13 @@ public class pagamentosService {
     public List<pagamentos> buscaTodosPagamentosFiltro(Long cod_deb, String cpf_cnpj, statusPagamentoEnum statusPag){
         List<pagamentos> pagamentosFiltrados = new ArrayList<>();
 
+
         if (cod_deb != null) {
             Optional<pagamentos> pagamentoRequisitadoOpt = pagamentos_repositorio.findById(cod_deb);
             pagamentoRequisitadoOpt.ifPresent(pagamentosFiltrados::add);
+            if(pagamentosFiltrados.isEmpty()){
+                return pagamentosFiltrados;
+            }
         }
 
         if (statusPag != null) {
@@ -72,6 +76,7 @@ public class pagamentosService {
         }
 
         if (cpf_cnpj != null && !cpf_cnpj.isEmpty()) {
+            cpf_cnpj = cpf_cnpj.trim().replace(".", "").replace("-", "").replace("/", "").replace("–", "");
             List<pagamentos> pagamentosPorCPF = pagamentos_repositorio.findBycpfcnpj(cpf_cnpj);
             if (pagamentosFiltrados.isEmpty()) {
                 pagamentosFiltrados.addAll(pagamentosPorCPF);
